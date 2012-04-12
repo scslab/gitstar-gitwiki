@@ -24,4 +24,7 @@ welcomeView usr proj =
        toHtml $ "$ cd " ++ usr ++"/" ++ proj ++ "\n"
        void "$ git checkout -b wiki\n"
        void "# remove all but .git\n"
-       "$ echo \"# My Wiki\" > Home.md\n"
+       void "$ echo \"# My Wiki\" > Home.md\n"
+       void "$ git add Home.md\n"
+       void "$ git commit -m \"my first wiki entry\"\n"
+       void "$ git push origin wiki:wiki\n"
