@@ -7,7 +7,7 @@
 
 module Views.Wiki ( viewWiki
                   , viewPages
-                  , ViewTab(..)
+                  , ViewTab(..), tabMimeType
                   ) where
 
 import Prelude hiding (div, span, id)
@@ -15,6 +15,7 @@ import Prelude hiding (div, span, id)
 import Control.Monad
 
 import qualified Data.ByteString.Char8 as S8
+import qualified Data.ByteString.Base64 as B64
 
 import Text.Blaze.Html5 hiding (title, style, map)
 import Text.Blaze.Html5.Attributes hiding (label, form, span, title)
@@ -23,6 +24,8 @@ import Text.Pandoc
 
 import Gitstar.Repo
 
+import System.FilePath.Posix (takeExtension)
+import Hails.IterIO.HailsRoute (systemMimeMap)
 
 data ViewTab = ViewHome
              | ViewPages
@@ -31,8 +34,17 @@ data ViewTab = ViewHome
 
 
 -- | Show a page
-viewPage :: GitBlob -> Html
-viewPage = markdownToHtml . S8.unpack . blobContent
+viewPage :: String -> GitBlob -> Html
+viewPage mime blob =
+  let b64content = blobContent $ blob
+      supType = takeWhile (/= '/') mime
+      content = S8.unpack . B64.decodeLenient . blobContent $ blob
+  in case mime of
+      "text/x-markdown" -> markdownToHtml content
+      "text/html"       -> preEscapedString content
+      _ | supType == "text" -> pretty . toHtml $ content
+      _                     -> pretty . toHtml . S8.unpack $ b64content
+    where pretty h = pre ! class_ "prettyprint" $ h
 
 viewWiki :: Repo -> ViewTab -> GitBlob -> Html
 viewWiki repo tab blob = do
@@ -44,7 +56,7 @@ viewWiki repo tab blob = do
     case tab of
       ViewOther fname -> li ! class_ "active" $ a ! href "#" $ toHtml fname
       _ -> return ()
-  div $ viewPage blob
+  div $ viewPage (tabMimeType tab) blob
     where activeIf x = if (tab == x) 
                          then class_ "active"
                          else class_ ""
@@ -61,6 +73,15 @@ viewPages repo pages = do
 --
 -- Misc
 --
+
+-- | Get the mime type based of the tab
+tabMimeType :: ViewTab -> String
+tabMimeType (ViewOther path) =
+  let ext = takeExtension path
+  in if null ext
+      then "application/octet-stream" -- unknown
+      else S8.unpack $ systemMimeMap (tail ext)
+tabMimeType _ = "text/x-markdown"
 
 markdownToHtml :: String -> Html
 markdownToHtml str =
