@@ -30,6 +30,8 @@ import Data.IterIO.Http
 import Data.IterIO.Http.Support
 
 import qualified Data.ByteString.Char8 as S8
+import qualified Data.ByteString.Lazy.Char8 as L8
+import qualified Data.ByteString.Base64 as B64
 
 import System.FilePath (splitDirectories)
 
@@ -89,11 +91,16 @@ doShowPage repo dirs = do
                     let mEnt = listToMaybe $ filter ((==objName) . entPath) t
                     in withHelpOrJust repo mEnt $ \ent -> do
                          mblob <- liftLIO $ getBlob repo (entPtr ent)
-                         with404orJust mblob $ \blob -> renderHtml $
-                           viewWiki repo tabType blob
+                         with404orJust mblob $ \blob ->
+                           let mType = tabMimeType tabType
+                           in if takeWhile (/= '/') mType == "text"
+                                then renderHtml $ viewWiki repo tabType blob
+                                else render mType (rawBlob blob)
   where tabType = if dirs == [homeFileName]
                     then ViewHome
                     else ViewOther $ List.intercalate "/" dirs
+        lazyfy = L8.pack . S8.unpack
+        rawBlob = lazyfy . B64.decodeLenient . blobContent
 --
 -- Helpers
 --
