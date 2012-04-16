@@ -1,4 +1,4 @@
 $(function() {
-  window.parent.postMessage(document.height.toString(), "*");
+  window.parent.postMessage($(document).height().toString(), "*");
 
 });
