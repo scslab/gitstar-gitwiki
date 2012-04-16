@@ -42,7 +42,7 @@ with404orJust mval act = case mval of
 
 -- | This sets the @_flash-*@ cookie value to the given message, with
 -- a unique message ID.
- flash :: String -> String -> Action t b DC ()
+flash :: String -> String -> Action t b DC ()
 flash n msg = do
   oid <- liftLIO genObjectId
   modify $ \s ->
