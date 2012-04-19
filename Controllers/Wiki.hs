@@ -45,9 +45,7 @@ showWikiHome :: Action t b DC ()
 showWikiHome = do
   uName <- getParamVal "user_name"
   pName <- getParamVal "project_name"
-  let repo = Repo { repoOwner = uName, repoName = pName }
-  doShowPage repo [homeFileName]
-
+  redirectTo $ "/" ++ uName ++ "/" ++ pName ++ "/page/" ++ homeFileName
 
 -- | Show a page
 showWikiPage :: Action t b DC ()
