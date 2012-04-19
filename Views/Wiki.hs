@@ -25,7 +25,7 @@ import Text.Pandoc
 import Gitstar.Repo
 
 import System.FilePath.Posix (takeExtension)
-import Hails.IterIO.HailsRoute (systemMimeMap)
+import Hails.IterIO.Mime
 
 data ViewTab = ViewHome
              | ViewPages
