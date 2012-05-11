@@ -10,6 +10,8 @@ import LIO
 import Policy.Gitstar
 import Data.IterIO.Http.Support
 
+import Control.Monad
+
 import Hails.App
 
 import Prelude hiding (head, id, div, span)
@@ -19,14 +21,15 @@ import qualified Text.Blaze.Renderer.Utf8 as R (renderHtml)
 
 renderHtml :: Html -> Action t b DC ()
 renderHtml htmlBody = do
-  uName <- getHailsUser
-  user <- liftLIO $ getOrCreateUser uName
-  render "text/html" $ R.renderHtml $ application user htmlBody
+  muName <- getHailsUser
+  muser <- liftLIO $ maybe (return Nothing) mkUser muName
+  render "text/html" $ R.renderHtml $ application muser htmlBody
+    where mkUser uName = Just `liftM` getOrCreateUser uName
 
 stylesheet :: String -> Html
 stylesheet uri = link ! rel "stylesheet" ! type_ "text/css" ! href (toValue uri)
 
-application :: User -> Html -> Html
+application :: Maybe User -> Html -> Html
 application _ content = docTypeHtml $ do
   head $ do
     title $ "GitStar - Where loops count"

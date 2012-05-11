@@ -8,13 +8,9 @@ module Utils where
 
 import qualified Data.ByteString.Char8 as S8
 import qualified Data.ByteString.Lazy.Char8 as L8
-import Data.Char (isSpace)
-import Data.Maybe (listToMaybe, fromJust)
+import Data.Maybe (fromJust)
 
 import Data.IterIO.Http.Support
-import Hails.Database.MongoDB ( Document
-                              , grantPriv, PrivilegeGrantGate
-                              , labeledDocI )
 import Hails.Data.LBson (genObjectId)
 
 import Control.Monad
@@ -23,7 +19,6 @@ import Control.Monad.Trans.State
 import LIO
 import LIO.DCLabel
 
-import Hails.App
 import Data.IterIO.Http (respAddHeader)
 
 

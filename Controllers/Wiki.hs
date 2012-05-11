@@ -145,6 +145,6 @@ withHelpOrJust :: Repo
                -> (a -> Action t b DC ())
                -> Action t b DC ()
 withHelpOrJust repo mx f = do
-  maybe (renderHtml $ welcomeView uName pName) f mx
+  maybe (renderHtml $ welcomeView (Just uName) pName) f mx
     where uName = repoOwner repo
           pName = repoName repo
