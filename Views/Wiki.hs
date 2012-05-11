@@ -38,11 +38,11 @@ viewPage :: String -> GitBlob -> Html
 viewPage mime blob =
   let b64content = blobContent $ blob
       supType = takeWhile (/= '/') mime
-      content = S8.unpack . B64.decodeLenient . blobContent $ blob
+      cont    = S8.unpack . B64.decodeLenient . blobContent $ blob
   in case mime of
-      "text/x-markdown" -> markdownToHtml content
-      "text/html"       -> preEscapedString content
-      _ | supType == "text" -> pretty . toHtml $ content
+      "text/x-markdown" -> markdownToHtml cont
+      "text/html"       -> preEscapedString cont
+      _ | supType == "text" -> pretty . toHtml $ cont
       _                     -> pretty . toHtml . S8.unpack $ b64content
     where pretty h = pre ! class_ "prettyprint" $ h
 
