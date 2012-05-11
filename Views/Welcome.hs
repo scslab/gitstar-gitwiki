@@ -8,6 +8,7 @@
 module Views.Welcome (welcomeView) where
 
 import Prelude hiding (div, span)
+import Data.Maybe (fromMaybe)
 import Control.Monad (void)
 
 import Policy.Gitstar (UserName, ProjectName)
@@ -15,8 +16,8 @@ import Policy.Gitstar (UserName, ProjectName)
 import Text.Blaze.Html5 hiding (title)
 import Text.Blaze.Html5.Attributes hiding (id, label, form, span)
 
-welcomeView :: UserName -> ProjectName -> Html
-welcomeView usr proj = 
+welcomeView :: Maybe UserName -> ProjectName -> Html
+welcomeView musr proj =
   div ! class_ "hero-unit" $ do
     h1 "Gitstar Git Wiki"
     p "A simple git-based wki app. To create the wiki execute: "
@@ -28,3 +29,4 @@ welcomeView usr proj =
        void "$ git add Home.md\n"
        void "$ git commit -m \"my first wiki entry\"\n"
        void "$ git push origin wiki:wiki\n"
+    where usr = fromMaybe "username" musr
