@@ -7,7 +7,7 @@
 module Layouts where
 
 import LIO
-import Policy.Gitstar
+import Gitstar.Policy
 import Data.IterIO.Http.Support
 
 import Control.Monad

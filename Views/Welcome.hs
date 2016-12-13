@@ -11,7 +11,7 @@ import Prelude hiding (div, span)
 import Data.Maybe (fromMaybe)
 import Control.Monad (void)
 
-import Policy.Gitstar (UserName, ProjectName)
+import Gitstar.Models(UserName, ProjectName)
 
 import Text.Blaze.Html5 hiding (title)
 import Text.Blaze.Html5.Attributes hiding (id, label, form, span)
